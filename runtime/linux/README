@@ -1,0 +1,7 @@
+Packages needed for building antlr4:
+
+sudo apt-get install uuid-dev 
+
+Building runtime for Linux (in build directory inside runtime/linux/antlr4-cpp-runtime-4.7.1-source):
+cmake .. -DANTLR_JAR_LOCATION=../../../antlr-4.7.1-complete.jar
+DESTDIR=/absolute_path/to/runtime_lib_dir make install
