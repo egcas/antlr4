@@ -6,15 +6,16 @@ include_directories(${CMAKE_BINARY_DIR}/include)
 include_directories(${CMAKE_BINARY_DIR}/include/antlr4-runtime)
 include_directories(${CMAKE_BINARY_DIR}/parser_gen)
 
+if (${ANTLR4_GRAMMAR_FILE} STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/grammar/egc.g4")
 
-add_executable(egc_gramar_test
-        example.cpp 
-        visitor.cpp 
-)
+        add_executable(egc_gramar_test
+                example.cpp
+                visitor.cpp
+        )
 
-set_property(TARGET egc_gramar_test PROPERTY CXX_STANDARD 11)
-set_property(TARGET egc_gramar_test PROPERTY CXX_STANDARD_REQUIRED ON)
+        set_property(TARGET egc_gramar_test PROPERTY CXX_STANDARD 11)
+        set_property(TARGET egc_gramar_test PROPERTY CXX_STANDARD_REQUIRED ON)
 
-target_link_libraries(egc_gramar_test antlr4_parser_generated_static antlr4_static)
+        target_link_libraries(egc_gramar_test antlr4_parser_generated_static antlr4_static)
 
-  
+endif()
