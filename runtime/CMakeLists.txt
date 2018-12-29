@@ -18,8 +18,8 @@ endif()
 set(ANTLR4_VERSION "4.7.1")
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-        set(ENV{CLASSPATH} ".:${CMAKE_CURRENT_SOURCE_DIR}/antlr-${ANTLR4_VERSION}-complete.jar:$ENV{CLASSPATH}")
-        set(ANTLR4_RUNTIME java -Xmx500M -cp "${CMAKE_CURRENT_SOURCE_DIR}/antlr-${ANTLR4_VERSION}-complete.jar:$ENV{CLASSPATH}")
+        set(ENV{CLASSPATH} ".:${CMAKE_CURRENT_SOURCE_DIR}/antlr-${ANTLR4_VERSION}-complete.jar")
+        set(ANTLR4_RUNTIME java -Xmx500M -cp "$ENV{CLASSPATH}")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         set(ENV_CLASSPATH ".$<SEMICOLON>${CMAKE_CURRENT_SOURCE_DIR}/antlr-${ANTLR4_VERSION}-complete.jar")
         file(TO_NATIVE_PATH "${ENV_CLASSPATH}" ENV_CLASSPATH)
@@ -83,24 +83,24 @@ add_custom_command(OUTPUT ${ANTLR4_GENERATED_SRC}
 
 add_library(antlr4_parser_generated_static STATIC ${ANTLR4_GENERATED_SRC} ${HEADER_OUTPUT_DIR}/antlr4-runtime.h)
 
-set(ANTLR4_JAVA_BASE_NAME "${CMAKE_CURRENT_BINARY_DIR}/${ANTLR4_GRAMMAR_NAME}")                  
+set(ANTLR4_JAVA_BASE_NAME "${PARSER_OUTPUT_DIR}/${ANTLR4_GRAMMAR_NAME}")
 set(ANTLR4_JAVA_SOURCE "${ANTLR4_JAVA_BASE_NAME}BaseListener.java" "${ANTLR4_JAVA_BASE_NAME}Listener.java" "${ANTLR4_JAVA_BASE_NAME}Lexer.java" "${ANTLR4_JAVA_BASE_NAME}Parser.java")                  
 set(ANTLR4_JAVA_CLASSES "${ANTLR4_JAVA_BASE_NAME}BaseListener.class" "${ANTLR4_JAVA_BASE_NAME}Listener.class" "${ANTLR4_JAVA_BASE_NAME}Lexer.class" "${ANTLR4_JAVA_BASE_NAME}Parser.class" "${ANTLR4_JAVA_BASE_NAME}Parser$RContext.class") 
                   
 add_custom_target(antlr4_grun COMMAND ${Java_JAVAC_EXECUTABLE} -cp "${CMAKE_CURRENT_SOURCE_DIR}/antlr-${ANTLR4_VERSION}-complete.jar:$ENV{CLASSPATH}" ${ANTLR4_JAVA_SOURCE}
-                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                   WORKING_DIRECTORY ${PARSER_OUTPUT_DIR}
                    COMMENT "compile grammar (java)"
                    VERBATIM)                  
 add_dependencies(antlr4_grun antlr4_run)                  
 
                   
 add_custom_target(antlr4_grun_gui_run COMMAND ${ANTLR4_RUNTIME} org.antlr.v4.gui.TestRig ${ANTLR4_GRAMMAR_NAME} ${ANTLR4_BASE_RULE_NAME} -gui
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "execute antr grun: Enter text and press Enter followed by Ctrl + D (Unix) or Ctrl + Z (Windows) (means EOF) - to see the gui")
+                  WORKING_DIRECTORY ${PARSER_OUTPUT_DIR} COMMENT "execute antr grun: Enter text and press Enter followed by Ctrl + D (Unix) or Ctrl + Z (Windows) (means EOF) - to see the gui")
 
 add_dependencies(antlr4_grun_gui_run antlr4_grun)
 
 add_custom_target(antlr4_grun_tree_run COMMAND ${ANTLR4_RUNTIME} org.antlr.v4.gui.TestRig ${ANTLR4_GRAMMAR_NAME} ${ANTLR4_BASE_RULE_NAME} -tree
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "execute antr grun: Enter text and press Enter followed by Ctrl + D (Unix) or Ctrl + Z (Windows) (means EOF) - to see the gui")
+                  WORKING_DIRECTORY ${PARSER_OUTPUT_DIR} COMMENT "execute antr grun: Enter text and press Enter followed by Ctrl + D (Unix) or Ctrl + Z (Windows) (means EOF) - to see the gui")
 
 add_dependencies(antlr4_grun_tree_run antlr4_grun)
 
