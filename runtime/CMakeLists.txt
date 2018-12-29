@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 2.8.11)
 
+set(CXX_STANDARD 11)
+set(CXX_STANDARD_REQUIRED ON)
+
 
 find_package(Java COMPONENTS Development)
 
 #due to a lots of warning while compiling antlr runtime, supress some warnings
-string(APPEND CMAKE_CXX_FLAGS "-Wno-attributes")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        string(APPEND CMAKE_CXX_FLAGS "-Wno-attributes")
+endif()
 
 if (NOT ${Java_FOUND})
         message( FATAL_ERROR  "Java compiler and/or runtime has not been found. Please install an appropriate java environment for your OS")
@@ -12,9 +17,16 @@ endif()
 
 set(ANTLR4_VERSION "4.7.1")
 
-set(ENV{CLASSPATH} ".:${CMAKE_CURRENT_SOURCE_DIR}/antlr-${ANTLR4_VERSION}-complete.jar:$ENV{CLASSPATH}")
-
-set(ANTLR4_RUNTIME java -Xmx500M -cp "${CMAKE_CURRENT_SOURCE_DIR}/antlr-${ANTLR4_VERSION}-complete.jar:$ENV{CLASSPATH}")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        set(ENV{CLASSPATH} ".:${CMAKE_CURRENT_SOURCE_DIR}/antlr-${ANTLR4_VERSION}-complete.jar:$ENV{CLASSPATH}")
+        set(ANTLR4_RUNTIME java -Xmx500M -cp "${CMAKE_CURRENT_SOURCE_DIR}/antlr-${ANTLR4_VERSION}-complete.jar:$ENV{CLASSPATH}")
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+        set(ENV_CLASSPATH ".$<SEMICOLON>${CMAKE_CURRENT_SOURCE_DIR}/antlr-${ANTLR4_VERSION}-complete.jar")
+        file(TO_NATIVE_PATH "${ENV_CLASSPATH}" ENV_CLASSPATH)
+        set(ENV{CLASSPATH} "${ENV_CLASSPATH}")
+        set(ANTLR4_RUNTIME java -Xmx500M -cp "${ENV_CLASSPATH}")
+        file(TO_NATIVE_PATH "${ANTLR4_RUNTIME}" ANTLR4_RUNTIME)
+endif()
 
 if( NOT ANTLR4_GRAMMAR_FILE)
         message( FATAL_ERROR  "Variable ANTLR4_GRAMMAR_FILE not set, set ANTLR4_GRAMMAR_FILE to hold the location of the grammar file (*.g4) from within your program.")        
@@ -27,11 +39,11 @@ if( NOT ANTLR4_BASE_RULE_NAME)
 endif()
 
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+#if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         add_subdirectory(linux)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-        add_subdirectory(windows)
-endif()
+#elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+#        add_subdirectory(windows)
+#endif()
 
 
 set(ANTLR_JAR_LOCATION "${CMAKE_CURRENT_LIST_DIR}/antlr-${ANTLR4_VERSION}-complete.jar")
