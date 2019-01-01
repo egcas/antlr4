@@ -76,6 +76,8 @@ add_custom_command(OUTPUT ${ANTLR4_GENERATED_SRC}
 )                 
 
 add_library(antlr4_parser_generated_static STATIC ${ANTLR4_GENERATED_SRC} ${HEADER_OUTPUT_DIR}/antlr4-runtime.h)
+set_property(TARGET antlr4_parser_generated_static PROPERTY CXX_STANDARD 11)
+set_property(TARGET antlr4_parser_generated_static PROPERTY CXX_STANDARD_REQUIRED ON)
 
 set(ANTLR4_JAVA_BASE_NAME "${PARSER_OUTPUT_DIR}/${ANTLR4_GRAMMAR_NAME}")
 set(ANTLR4_JAVA_SOURCE "${ANTLR4_JAVA_BASE_NAME}BaseListener.java" "${ANTLR4_JAVA_BASE_NAME}Listener.java" "${ANTLR4_JAVA_BASE_NAME}Lexer.java" "${ANTLR4_JAVA_BASE_NAME}Parser.java")                  
@@ -84,7 +86,7 @@ set(ANTLR4_JAVA_CLASSES "${ANTLR4_JAVA_BASE_NAME}BaseListener.class" "${ANTLR4_J
 add_custom_target(antlr4_grun COMMAND ${Java_JAVAC_EXECUTABLE} -cp "${CMAKE_CURRENT_SOURCE_DIR}/antlr-${ANTLR4_VERSION}-complete.jar:$ENV{CLASSPATH}" ${ANTLR4_JAVA_SOURCE}
                    WORKING_DIRECTORY ${PARSER_OUTPUT_DIR}
                    COMMENT "compile grammar (java)"
-                   VERBATIM)                  
+                   VERBATIM)                                 
 add_dependencies(antlr4_grun antlr4_run)                  
 
                   
