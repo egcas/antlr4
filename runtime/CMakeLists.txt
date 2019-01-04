@@ -7,7 +7,7 @@ set(CXX_STANDARD_REQUIRED ON)
 find_package(Java COMPONENTS Development)
 
 #due to a lots of warning while compiling antlr runtime, supress some warnings
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
         string(APPEND CMAKE_CXX_FLAGS "-Wno-attributes")
 endif()
 
@@ -17,10 +17,10 @@ endif()
 
 set(ANTLR4_VERSION "4.7.1")
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
         set(ENV{CLASSPATH} ".:${CMAKE_CURRENT_SOURCE_DIR}/antlr-${ANTLR4_VERSION}-complete.jar")
         set(ANTLR4_RUNTIME java -Xmx500M -cp "$ENV{CLASSPATH}")
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+elseif(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Windows")
         set(ENV_CLASSPATH ".$<SEMICOLON>${CMAKE_CURRENT_SOURCE_DIR}/antlr-${ANTLR4_VERSION}-complete.jar")
         file(TO_NATIVE_PATH "${ENV_CLASSPATH}" ENV_CLASSPATH)
         set(ENV{CLASSPATH} "${ENV_CLASSPATH}")
@@ -49,10 +49,10 @@ include_directories(${CMAKE_BINARY_DIR}/include)
 # due to cpp runtime bug this include must also be set
 include_directories(${CMAKE_BINARY_DIR}/include/antlr4-runtime)
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    add_custom_command(OUTPUT ${HEADER_OUTPUT_DIR}/antlr4-runtime.h COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_LIST_DIR}/linux/antlr4-headers-${ANTLR4_VERSION}" ${HEADER_OUTPUT_DIR})
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    add_custom_command(OUTPUT ${HEADER_OUTPUT_DIR}/antlr4-runtime.h COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_LIST_DIR}/windows/antlr4-cpp-runtime-${ANTLR4_VERSION}-vs2015/antlr4-runtime" ${HEADER_OUTPUT_DIR})
+if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Linux")
+        add_custom_command(OUTPUT ${HEADER_OUTPUT_DIR}/antlr4-runtime.h COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_LIST_DIR}/sources/antlr4-headers-${ANTLR4_VERSION}" ${HEADER_OUTPUT_DIR} COMMENT "copy runtime header for antlr4 runtime")
+elseif(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Windows")
+        add_custom_command(OUTPUT ${HEADER_OUTPUT_DIR}/antlr4-runtime.h COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_LIST_DIR}/windows/antlr4-cpp-runtime-${ANTLR4_VERSION}-vs2015/antlr4-runtime" ${HEADER_OUTPUT_DIR} COMMENT "copy runtime header for antlr4 runtime")
 endif()
 
 add_custom_target(antlr4_run
