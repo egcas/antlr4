@@ -53,7 +53,10 @@ namespace antlrcpp {
 #if __has_cpp_attribute(clang::fallthrough)
           [[clang::fallthrough]];
 #endif
-
+          // gcc fall through
+#if __has_cpp_attribute(fallthrough)
+        [[fallthrough]];
+#endif
         default:
           result += c;
       }
